@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Authenticity Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Authenticity Detector</h1>
+        <p>Select a tool below to analyze your content.</p>
+
+        <div class="tab-container">
+            <button class="tab-link active" onclick="openTab(event, 'News')">Fake News Detector</button>
+            <button class="tab-link" onclick="openTab(event, 'Video')">Deepfake Detector</button>
+        </div>
+
+        <div id="News" class="tab-content" style="display:block;">
+            <h2>Check a News Article</h2>
+            <form action="/predict_news" method="post">
+                <textarea name="news_text" placeholder="Paste the full text of the news article here..." required></textarea>
+                <br>
+                <button type="submit" class="btn-submit">Analyze Text</button>
+            </form>
+        </div>
+
+        <div id="Video" class="tab-content">
+            <h2>Check a Video File</h2>
+            <form action="/predict_video" method="post" enctype="multipart/form-data">
+                <label for="video_file" class="file-upload-label">
+                    <span>Click to Choose a Video File</span>
+                </label>
+                <input type="file" id="video_file" name="video_file" accept="video/mp4,video/quicktime" required>
+                <span id="file-name" class="file-name-display">No file selected</span>
+                <br>
+                <button type="submit" class="btn-submit">Analyze Video</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-link");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.getElementById('video_file').onchange = function () {
+            const fileName = this.files[0] ? this.files[0].name : "No file selected";
+            document.getElementById('file-name').textContent = fileName;
+        };
+        
+        document.querySelector('#News form').addEventListener('submit', function() {
+            const button = this.querySelector('.btn-submit');
+            button.disabled = true;
+            button.textContent = 'Analyzing...';
+        });
+
+        document.querySelector('#Video form').addEventListener('submit', function() {
+            const button = this.querySelector('.btn-submit');
+            button.disabled = true;
+            button.textContent = 'Analyzing... Please Wait';
+        });
+    </script>
+</body>
+</html>
